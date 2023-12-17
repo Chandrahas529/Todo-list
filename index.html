@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Todo List</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<style>
+			html{
+				scroll-behavior: smooth;
+			}
+			body{
+				margin: 0;
+				padding: 0;
+				background-image: url("nature.png");
+				background-repeat: no-repeat;
+				background-size: cover;
+				background-attachment: fixed;
+			}
+			form{
+				height: fit-content;
+				margin: 2em auto;
+				max-width: 650px;
+				background: rgba(0,0,0,0.65);
+				padding: 10px 30px 30px 30px;
+				font-size: 22px;
+				font-family: cursive;
+				color: #c3d2de;
+				box-shadow: -1px 5px 6px 5px black;
+			}
+			h1{
+				color: #aaaaaa;
+				font-family: sans-serif;
+				text-align: center;
+				font-size: xxx-large;
+			}
+			input[type="text"]{
+				background: transparent;
+				font-size: 21px;
+				width: -webkit-fill-available;
+				border: 1px solid #ffffff;
+				color: aliceblue;
+				padding: 2px 18px;
+				width: -moz-available;
+			}
+			form div{
+				display: flex;
+				flex-direction: column;
+				align-items: flex-start;
+				gap: 20px;
+			}
+			#butto{
+				padding: 3px 8px;
+				font-size: 22px;
+				letter-spacing: 3px;
+				margin: 0 auto;
+				display: flex;
+				width: 300px;
+				justify-content: center;
+				background: #0c4387;
+				border: none;
+				color: aliceblue;
+				cursor: pointer;
+				text-transform: capitalize;
+				
+			}
+			#buttoS,#buttoC{
+				padding: 3px 8px;
+				font-size: 22px;
+				letter-spacing: 3px;
+				margin: 0 auto;
+				display: flex;
+				width: 300px;
+				justify-content: center;
+				background: #0c4387;
+				border: none;
+				color: aliceblue;
+				cursor: pointer;
+			}
+			#buttoS{
+				background: #0ca91a;
+			}
+			#buttoC{
+				background: #dc3030;
+			}
+			#savectn{
+				display: flex;
+				width: 310px;
+				margin: 0 auto;
+				transform: rotateY(90deg);
+				transform-origin: right;
+				transition: 1s linear one;
+			}
+			#demo{
+				padding: 12px 30px;
+				width: fit-content;
+			}
+			.list{
+				background: rgba(255,255,255,0.5);
+				display: flex;
+				flex-direction: row;
+				border-radius: 15px;
+				align-items: center;
+				justify-content: space-between;
+				font-size: 20px;
+				gap: 2em;
+				padding: 5px 19px;
+			}
+			.bold{
+				font-weight: 800;
+				border-right: 2px solid;
+    			padding-right: 18px;
+			}
+			.rgt-ctn{
+				display: flex;
+				gap: 5px;
+			}
+			.edit{
+				color: aliceblue;
+				border: none;
+				background: blue;
+				padding: 2px 16px;
+				border-radius: 10px 0 0 10px;
+				cursor: pointer;
+			}
+			.delete{
+				color: aliceblue;
+				background: red;
+				border: none;
+				border-radius: 0 10px 10px 0;
+				cursor: pointer;
+			}
+			@media only screen and (max-width:500px){
+				.list{
+					gap:0;
+					padding: 5px 13px;
+				}
+				#demo{
+					padding: 12px 12px;
+				}
+				form{
+					margin: 2em 12px;
+				}
+			}
+		</style>
+	</head>
+	<script>
+		
+	</script>
+	<body>
+		<form method="POST" class="form" >
+			<h1 id="head">Todo List</h1>
+			<div><label>Title -</label><input autocomplete="off" type="text" name="name" id="name"></div><br>
+			<div><label>Description -</label><input autocomplete="off" type="text" name="class" id="class"></div><br>
+			<input type="number" readonly id="showid" style="display: none;">
+			<!--<div><label>Timing -</label><input type="text" name="age" id="age"></div><br>-->
+			<input type="submit" id="butto" name="submit" value="+Add">
+			<div id="savectn" class="save-ctn">
+				<input type="submit" onclick="upd()" id="buttoS" name="submit" value="Save">
+				<input type="submit" onclick="canc()" id="buttoC" name="submit" value="Cancel">
+			</div>
+		</form>
+		<p id="demo"></p>
+		
+		<script>
+			//For cancel button
+			function canc(){
+				head.innerText = "Todo List";
+				window.event.preventDefault();
+				const deg = 90;
+				butto.style.display = "flex";
+				savectn.style.transform = `rotateY(${deg}deg)`;
+				document.getElementById("name").value = "";
+				document.getElementById("class").value = "";
+			}
+
+			//For delete
+			function del(id){
+					$.post("delete.php", {
+						id : id
+					});
+					window.event.preventDefault();
+					setTimeout(() => {
+						abc()
+					}, 1000);
+				}
+
+				//reload the data after processing
+				function abc(){
+					de = document.getElementById("demo");
+					i = " ";
+					fetch("Data.json")
+					.then(response => response.json())
+					.then(json => {
+						json.forEach(tdo => {
+							i += `<div class="list"><div><span class="bold">${tdo.name}</span> <span>${tdo.class}</span></div><div class="rgt-ctn"><button onclick="putvaluee('${tdo.name}','${tdo.class}','${tdo.id}')" class="edit">Edit</button><button onclick="del('${tdo.id}')" id="delete" class="delete">Delete</button><input readonly style="display:none;" type="number" id='idno' value="${tdo.id}"></div></div><br>`;
+						});
+						de.innerHTML = i;
+					});
+				}
+			//Send the data for update
+			function upd(event){
+					var id = $("#showid").val();
+					var clas = $("#class").val();
+					var name = $("#name").val();
+					$.post("update.php", {
+						id : id,
+						desc: clas,
+						title: name
+					});
+					window.event.preventDefault();
+					canc();
+					setTimeout(() => {
+						abc()
+					}, 1000);
+				}
+			$(document).ready(function () {
+				//Saves newly created data.
+            	$('#butto').click(function (e) {
+
+					e.preventDefault();
+					var name = $("#name").val();
+					var room = $("#class").val();
+					if(name != "" && room !=""){
+					$.post("experiment2.php", {
+						name : name,
+						room : room
+					});
+					}
+					$("#name").val("");
+					$("#class").val("");
+					setTimeout(() => {
+						abc()
+					}, 1000);
+				});
+				abc();
+				//Data load function
+				function abc(){
+					de = document.getElementById("demo");
+					i = " ";
+					fetch("Data.json")
+					.then(response => response.json())
+					.then(json => {
+						json.forEach(tdo => {
+							i += `<div class="list"><div><span class="bold">${tdo.name}</span> <span>${tdo.class}</span></div><div class="rgt-ctn"><button onclick="putvaluee('${tdo.name}','${tdo.class}','${tdo.id}')" class="edit">Edit</button><button onclick="del('${tdo.id}')" id="delete" class="delete">Delete</button><input readonly style="display:none;" type="number" id='idno' value="${tdo.id}"></div></div><br>`;
+						});
+						de.innerHTML = i;
+					});
+				}
+        	});
+			//Transfer data for edit to the input box
+			function putvaluee(nam,clas,id){
+				document.documentElement.scrollTop = 0;
+				document.body.scrollTop = 0;
+				head.innerText = "Edit";
+				const deg = 0;
+				butto.style.display = "none";
+				savectn.style.transform = `rotateY(${deg}deg)`;
+				document.getElementById("name").value = nam;
+				document.getElementById("class").value = clas;
+				document.getElementById("showid").value = id;
+				
+			}
+		</script>
+        
+	</body>
+
+</html>
+
+
